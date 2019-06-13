@@ -1,0 +1,6 @@
+#define __LIBRARY__
+#include <unistd.h>
+
+_syscall1(int, keyset,char*,passphrase)
+_syscall1(time_t, times, struct tms *, tbuf)
+_syscall1(int, encr, int, fd)

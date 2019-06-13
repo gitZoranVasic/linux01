@@ -1,0 +1,60 @@
+#include <unistd.h>
+#define UTIL_IMPLEMENTATION
+#include "utils.h"
+#include <errno.h>
+
+int seed = 0;
+
+int rand() {	
+	if(seed == 0) seed = (times(NULL) * 1367);	
+	int i,j = 36000;
+	int check = 1;
+	
+	while(j > 0) {
+		j--;
+	}	
+
+	i = (times(NULL) * 1367) + seed;
+	i = i + '!';	
+	i = i%('~'-'!');
+	if(i < 0) i = -i;
+
+	//return the value in the first 128 of ascii characters as int
+	seed = i;
+	return i;
+}
+
+int main(char* args) {
+
+	char c[1];
+	int choice = 0;
+	
+	int argNum = get_argc(args);
+
+	if(argNum != 2) {
+		printerr("Broj parametara nije ispravan! \n");
+		_exit(-1);
+	}
+
+
+	choice = atoi(get_argv(args, 1));
+
+	if(choice < 1 || choice > 3) {
+		printerr("Parametar nije ispravan!\n");
+		_exit(-1);
+	}
+	
+	int i, j = 2;
+
+	for(i = 0; i < choice; i++) {
+		j = j * 2;
+	}
+	//j mi prestavlja za sledecu petlju koliko treba slova da generisem! 
+	
+	for(i = 0; i < j; i++) {
+		c[0] = rand();
+	}
+	
+
+ 	_exit(-1);
+}
