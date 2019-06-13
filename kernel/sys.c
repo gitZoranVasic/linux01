@@ -234,7 +234,7 @@ int sys_null(int nr)
 	static int prev_nr=-2;
 	if (nr==174 || nr==175) return -ENOSYS;
 
-	if (prev_nr!=nr) 
+	if (prev_nr!=nr)
 	{
 		prev_nr=nr;
 //		printk("system call num %d not available\n",nr);
@@ -242,9 +242,9 @@ int sys_null(int nr)
 	return -ENOSYS;
 }
 
-int strCopy(char to[], char from[]) 
+int strCopy(char to[], char from[])
 {
-	
+
 	int i = 0;
 
 	while(get_fs_byte(from + i) != '\0') {
@@ -302,17 +302,17 @@ unsigned int hash(unsigned char *str) {
 char encryptKey[513]; //ovo je key
 int keyLen;
  * */
-int sys_keyset(char passphrase[]) 
+int sys_keyset(char passphrase[])
 {
-	int i = 0;	
+	int i = 0;
 
 	while(1) {
 		if(get_fs_byte(passphrase + i) == '\0') break;
 		i++;
 		//ovo mi je strlen
 	}
-		
-	
+
+
 	switch(i) {
 		case 0:
 		    encryptKey[0] = 0;
@@ -326,7 +326,7 @@ int sys_keyset(char passphrase[])
 	}
 }
 
-int sys_keyclear() 
+int sys_keyclear()
 {
 	int i = sys_keyset("");
 	return 0;
@@ -403,7 +403,7 @@ int findMin(char * temp) {
 }
 
 int desifrujBlok(char *sekvenca){
-    
+
     int i, j, k, l, sekvencaLen,  rows, index;
     sekvencaLen = strlen(sekvenca);
     rows = sekvencaLen / keyLen;
@@ -767,7 +767,7 @@ int sortInodes(int mode, int * files, int fileAmount) {
     }
 }
 
-int encr(struct m_inode * inode) {
+int encrr(struct m_inode * inode, int prt) {
     int nr;
     //int diskIndex;
 
@@ -789,6 +789,7 @@ int encr(struct m_inode * inode) {
                 if(!S_ISDIR(inode->i_mode))
                     sifrujBlok(bh->b_data); //ovo je metoda za enkripciju koja prima char *
                 upisiUHidden(inode->i_num);
+                if(prt)
                 printk("Enkripcija fajla %d je zavrsena!\n",inode->i_num);
 
             bh->b_dirt = 1;
@@ -799,7 +800,7 @@ int encr(struct m_inode * inode) {
     return 0;
 }
 
-int decr(struct m_inode * inode) {
+int decrr(struct m_inode * inode, int prt) {
     int nr;
     //int diskIndex;
 
@@ -825,7 +826,10 @@ int decr(struct m_inode * inode) {
                     printk("Pogresan kljuc! Unesite kljuc koji je koriscen za enkriptovanje!\n");
                     break;
                 }
-                printk("Dekripcija faja %d zavrsena!\n", inode->i_num);
+
+                if(prt) {
+                    printk("Dekripcija faja %d zavrsena!\n", inode->i_num);
+                }
 
             bh->b_dirt = 1;
             brelse(bh);
@@ -886,9 +890,9 @@ int sys_encr(int fd, int mode) {
 
         if ((mode == 1 && flagEncr == 0) || (mode == 2 && flagEncr == 1)) {
             if(mode == 1)
-                encr(inode);
+                encrr(inode, 1);
             else
-                decr(inode);
+                decrr(inode, 1);
 
         } else if (mode == 1 && flagEncr == 1) {
             printk("Fajl %d je vec enkriptovan\n",inode->i_num);

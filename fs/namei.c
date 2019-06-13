@@ -519,6 +519,7 @@ int sys_rmdir(const char * name)
 		iput(dir);
 		return -ENOENT;
 	}
+
 	bh = find_entry(dir,basename,namelen,&de);
 	if (!bh) {
 		iput(dir);
@@ -534,6 +535,13 @@ int sys_rmdir(const char * name)
 		brelse(bh);
 		return -EPERM;
 	}
+
+    int flagEncr = checkFajlTxt(inode->i_num);
+    if(flagEncr) {
+        return -EPERM;
+
+    }
+
 	if (inode == dir) {	/* we may not delete ".", but "../dir" is ok */
 		iput(inode);
 		iput(dir);

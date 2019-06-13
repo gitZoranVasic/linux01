@@ -63,7 +63,7 @@ int sys_chdir(const char * filename)
 
     int flagEncr = checkFajlTxt(inode->i_num);
     if(flagEncr) {
-        return -ENOTDIR;
+        return -EPERM;
     }
 	if (!S_ISDIR(inode->i_mode)) {
 		iput(inode);
